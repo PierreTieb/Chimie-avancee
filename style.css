@@ -67,3 +67,4 @@ body[data-theme="mauve"]{--grid:rgba(225,212,255,.13);--bg-top:#5A49A8;--bg-bott
 .shot{background:rgba(255,255,255,.05)}
 #confetti-canvas{display:none;position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 .srch{width:100%;padding:10px 14px;border-radius:14px;border:2px solid #7C4DE8;background:rgba(255,255,255,.08);color:#fff;font:inherit;margin-bottom:8px}.cp{flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.hd{margin:14px 0 4px;color:var(--soft);font-size:.9rem;text-align:left}.ev{color:var(--soft);font-size:.8rem}

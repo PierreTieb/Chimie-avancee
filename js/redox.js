@@ -47,7 +47,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
 if(t.dataset.go){clearTimeout(tm);go(t.dataset.go)}
 else if(t.dataset.m){const k=t.dataset.m;S[k]=Math.min(10,Math.max(1,S[k]+ +t.dataset.d));render()}
 else if(t.dataset.s){const x=S[t.dataset.s][t.dataset.i];x.c=Math.max(x.min,x.c+ +t.dataset.d);render()}
-else if(t.dataset.r){forced=RX[+t.dataset.r].p;$('#ov').classList.remove('on');newEx()}});
+else if(t.dataset.c){pick(t.dataset.c)}else if(t.dataset.cb){pick(null)}else if(t.dataset.r){forced=RX[+t.dataset.r].p;$('#ov').classList.remove('on');newEx()}});
 function go(id){document.body.dataset.theme=id=='work'?'mauve':'home';document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==id))}
 function ov(t,b){$('#ov-t').textContent=t;$('#ov-b').innerHTML=b;$('#ov').classList.add('on')}
 $('#ov-x').onclick=()=>$('#ov').classList.remove('on');
@@ -56,9 +56,11 @@ const hideRot=()=>$('#rot').classList.remove('on');$('#rot').onclick=hideRot;add
 $('#b-ok').onclick=()=>{if(check()){const bb=$('#b-ok').getBoundingClientRect();Confetti.burst($('#confetti-canvas'),bb.left+bb.width/2,bb.top);$('#b-ok').style.display='none';if(S.step==4)$('#b-next').style.display='';else tm=setTimeout(()=>setStep(S.step+1),2000)}};
 $('#b-next').onclick=()=>{forced=null;newEx()};
 $('#b-couples').onclick=()=>ov('Les couples',S.D.map(c=>'<p>'+nm(c)+' — E° = '+c.E+' V<br>'+eq(c)+'</p>').join(''));
-const rxList=q=>{const t=q.toLowerCase().split(/\s+/).filter(Boolean),m=[];RX.forEach((x,i)=>{if(t.every(w=>x.key.includes(w)))m.push(i)});return m.slice(0,50).map(i=>'<button class="cp" data-r="'+i+'">'+cc(RX[i].p[0])+cc(RX[i].p[1])+'</button>').join('')+(m.length>50?'<p>'+m.length+' réactions : affine ta recherche pour voir les autres.</p>':m.length?'':'<p>Aucune réaction trouvée.</p>')};
-document.addEventListener('input',e=>{if(e.target.id=='rx-q')$('#rx-l').innerHTML=rxList(e.target.value)});
-$('#b-choose').onclick=()=>ov('Choisir une réaction','<input id="rx-q" class="srch" placeholder="Rechercher (ex : MnO4, Fe, Cu…)" autocomplete="off"><div id="rx-l">'+rxList('')+'</div>');
+const COM=['mno4','cr2o7','fe3','cu2','zn2','i2','cl2','no3','h2o2','al3','ag','fe2','s4o6'],btn=c=>'<button class="cp" data-c="'+c.id+'">'+cc(c)+'<span class="ev">'+c.E+' V</span></button>';
+function pick(id){const T=$('#ov-t'),B=$('#ov-b');if(!id){T.textContent='Choisir une réaction';B.innerHTML='<p>Étape 1/2 — choisis un premier couple.</p><h3 class="hd">Couples courants</h3>'+COM.map(cp).map(btn).join('')+'<h3 class="hd">Autres couples</h3>'+C.filter(c=>!COM.includes(c.id)).map(btn).join('');return}
+const c=cp(id),l=[];RX.forEach((x,i)=>{if(x.p.includes(c))l.push([i,x.p[0]==c?x.p[1]:x.p[0]])});l.sort((a,b)=>b[1].E-a[1].E);
+T.textContent='Choisir une réaction';B.innerHTML='<p>Étape 2/2 — couples qui peuvent réagir avec :</p><div class="hrow">'+cc(c)+'</div><button class="btn-secondary" data-cb="1">← Changer de premier couple</button>'+l.map(([i,o])=>'<button class="cp" data-r="'+i+'">'+cc(o)+'<span class="ev">'+o.E+' V</span></button>').join('')}
+$('#b-choose').onclick=()=>{ov('Choisir une réaction','');pick(null)};
 function tuto(step){const t=TU[sess.t||0],a=cp(t.a),b=cp(t.b),B=bil(a,b),ex='<p>Exemple avec '+nm(a)+' et '+nm(b)+' :</p>';
 if(step<3){const tx=['On écrit l\'oxydant à gauche et le réducteur à droite, puis on vérifie que l\'élément principal est conservé.','On équilibre l\'oxygène en ajoutant des H₂O du côté qui en manque.','On équilibre l\'hydrogène en ajoutant des H⁺ du côté qui en manque.','On équilibre les charges avec des e⁻ : la charge totale doit être identique des deux côtés.'];return'<p>Méthode, sur le couple '+nm(a)+' :</p>'+tx.map((s,i)=>{const[l,r]=tk(a,1,i+1);return'<div class="shot">'+row(l,r,'=')+'</div><p><b>'+(i+1)+'.</b> '+s+'</p>'}).join('')}
 const hs=f=>'<div class="shot"><div class="col">'+[[a,B.a],[b,B.b]].map(([c,m])=>{const[l,r]=tk(c,m,4);return'<div class="hrow">'+(f?'<span class="pill mul">×'+m+'</span>':'')+row(l,r,'=')+'</div>'}).join('')+'</div></div>';
